@@ -25,7 +25,7 @@ SECRET_KEY = '2%2jf@tuj#blan6%j%djhs&%a-**nfbyrj4!0_2$dxf67tus6+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['vcm-12419.vm.duke.edu', 'web']
 
 
 # Application definition
@@ -75,8 +75,11 @@ WSGI_APPLICATION = 'Lyber.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
     }
 }
 
