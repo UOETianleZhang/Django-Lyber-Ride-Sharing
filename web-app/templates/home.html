@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+<head>
+    <title>Home Page</title>
+</head>
+
+{% block content %}
+    <button><a href="{% url 'userPage' %}">I'am a customer</a></button>
+    <button><a href="{% url 'userPage' %}">I'am a driver</a></button>
+{% endblock %}
