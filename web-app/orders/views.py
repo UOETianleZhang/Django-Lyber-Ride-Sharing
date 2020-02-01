@@ -3,6 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import authenticate, UserCreationForm
 from django.shortcuts import render, redirect
 
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
+from django.views import generic
+from .models import Choice, Question, Ride
+from .models import RideForm
 
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
@@ -40,12 +46,7 @@ def signup_view(request, *args, **kwargs):
         errors.append("not valid")
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'user': form, 'errors': errors})
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
-from django.urls import reverse
-from django.views import generic
-from .models import Choice, Question, Ride
-from .models import RideForm
+
 class IndexView(generic.ListView):
     template_name = 'orders/index.html'
     context_object_name = 'latest_question_list'
