@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path
 # Use include() to add URLS from the catalog application and authentication system
 from django.urls import include
+from orders.views import signup_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('signup/', signup_view),
 ]
 
 

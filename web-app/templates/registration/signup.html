@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+{% if user.is_authenticated %}
+<p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+{% else %}
+<p>Please login to see this page.</p>
+{% endif %}
+{% endif %}
+
+
+<form action="" method="post" id="user_form" novalidate="">
+    {% csrf_token %}
+    <p>First, enter a username and password. Then, you'll be able to edit more user options.</p>
+    <div>
+        <fieldset class="module aligned wide">
+            <div class="form-row field-username">
+                <div>
+                    <label class="required" for="id_username">Username:</label>
+                    <input type="text" name="username" class="vTextField" maxlength="150" autofocus="" required=""
+                           id="id_username">
+                    <div class="help">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
+                </div>
+            </div>
+            <div class="form-row field-password1">
+                <div>
+                    <label class="required" for="id_password1">Password:</label>
+
+                    <input type="password" name="password1" required="" id="id_password1">
+                    <div class="help">
+                        <ul>
+                            <li>Your password can't be too similar to your other personal information.</li>
+                            <li>Your password must contain at least 8 characters.</li>
+                            <li>Your password can't be a commonly used password.</li>
+                            <li>Your password can't be entirely numeric.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-row field-password2">
+                <div>
+                    <label class="required" for="id_password2">Password confirmation:</label>
+                    <input type="password" name="password2" required="" id="id_password2">
+                    <div class="help">Enter the same password as before, for verification.</div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="submit-row"><input type="submit" value="Save" class="default" name="_save">
+            <input type="submit" value="Save and add another" name="_addanother">
+            <input type="submit" value="Save and continue editing" name="_continue">
+        </div>
+    </div>
+</form>
+
+{% endblock %}
