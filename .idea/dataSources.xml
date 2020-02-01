@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+<<<<<<< HEAD
     <data-source source="LOCAL" name="Django default" uuid="373a4ae8-a973-44d5-80f1-981c20344e96">
+=======
+    <data-source source="LOCAL" name="Django default" uuid="69d3756c-1261-43a4-9eb5-95355832c4f1">
+>>>>>>> Orders_Operation
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

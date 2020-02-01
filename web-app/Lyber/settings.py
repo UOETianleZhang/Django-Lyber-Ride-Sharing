@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['vcm-12419.vm.duke.edu', 'web']
 # Application definition
 
 INSTALLED_APPS = [
+    'orders.apps.OrdersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,13 @@
+{% if latest_question_list %}
+    <ul>
+    {% for question in latest_question_list %}
+        <li><a href="{% url 'orders:detail' question.id %}">{{ question.question_text }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+<button><a class="btn btn-primary" href="{% url 'orders:request_ride' %}">create</a></button>
+<button><a class="btn btn-primary" href="{% url 'orders:check_ride' %}">check_ride</a></button>
+{#<button><a class="btn btn-primary" href="{% url 'orders:confirm_ride' %}">confirm</a></button>#}
