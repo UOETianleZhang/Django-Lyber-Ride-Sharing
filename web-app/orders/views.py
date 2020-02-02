@@ -10,6 +10,8 @@ from django.views import generic
 from .models import Choice, Question, Ride
 from .models import RideForm
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
     # request, template name, context info
@@ -26,6 +28,7 @@ def user_page_view(request, *args, **kwargs):
 def driver_page_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
     # request, template name, context info
+    print(request)
     return render(request, "driverPage.html", {})
 
 
@@ -47,7 +50,8 @@ def signup_view(request, *args, **kwargs):
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'user': form, 'errors': errors})
 
-class IndexView(generic.ListView):
+
+class IndexView(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/index.html'
     context_object_name = 'latest_question_list'
 
@@ -55,7 +59,7 @@ class IndexView(generic.ListView):
         """Return the last five published questions."""
         return Question.objects.order_by('-pub_date')[:5]
 
-class RequestRideView(generic.CreateView):
+class RequestRideView(LoginRequiredMixin, generic.CreateView):
     # model = Ride
     form_class = RideForm
     # print(form_class)
@@ -70,7 +74,7 @@ class RequestRideView(generic.CreateView):
         return reverse('orders:check_ride')
 
 
-class CheckRideView(generic.ListView):
+class CheckRideView(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/check_ride.html'
     context_object_name = 'latest_ride_list'
 
@@ -78,7 +82,7 @@ class CheckRideView(generic.ListView):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
-        context['role'] = 'rider_owner'
+        context['role'] = 'driver'
         print(context)
         return context
 
@@ -87,7 +91,7 @@ class CheckRideView(generic.ListView):
         return Ride.objects.order_by('start_time')[:5]
 
 
-class ModifyRideView(generic.UpdateView):
+class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'orders/modify_ride.html'
     model = Ride
     fields = '__all__'
@@ -96,7 +100,7 @@ class ModifyRideView(generic.UpdateView):
         return reverse('orders:check_ride')
 
 
-class ConfirmRideView(generic.DetailView):
+class ConfirmRideView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/confirm_ride.html'
 
@@ -109,11 +113,11 @@ def confirm(request, ride_id):
     # user hits the Back button.
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
-class RideDetailView(generic.DetailView):
+class RideDetailView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/ride_detail.html'
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Question
     template_name = 'orders/detail.html'
 
