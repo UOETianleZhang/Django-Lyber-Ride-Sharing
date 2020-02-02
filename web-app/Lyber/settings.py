@@ -25,7 +25,7 @@ SECRET_KEY = '2%2jf@tuj#blan6%j%djhs&%a-**nfbyrj4!0_2$dxf67tus6+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['vcm-12419.vm.duke.edu', 'web']
+ALLOWED_HOSTS = ['vcm-12419.vm.duke.edu', 'web', '0.0.0.0']
 
 
 # Application definition
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'orders'
 ]
 
 MIDDLEWARE = [
@@ -76,6 +75,19 @@ WSGI_APPLICATION = 'Lyber.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         # 'HOST': 'db',
+#         # 'PORT': 5432,
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -85,6 +97,7 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
 
 
 # Password validation
