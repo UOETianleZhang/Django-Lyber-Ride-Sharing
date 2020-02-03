@@ -29,6 +29,8 @@ class RiderDriver(models.Model):
     special_info = models.TextField(null=True, blank=True)
 
 
+
+
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
@@ -113,5 +115,16 @@ class RideForm(ModelForm):
         #     'start_time': SelectDateWidget(),
         #     'finish_time': SelectDateWidget()
         # }
+
+
+class Order(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    driver = models.OneToOneField(RiderDriver, on_delete=models.CASCADE, null=True)
+    ride = models.OneToOneField(Ride, on_delete=models.CASCADE, null=True)
+
+
+class RiderSharer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
 
 
