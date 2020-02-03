@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>Before becoming a new driver, you need to provide your name and vehicle information.</p>
+    {{ form.as_p }}
+    {#    <div>#}
+    {#        <td>{{ "Your Name" }}</td>#}
+    {#        <td>{{ form.driverName }}</td>#}
+    {#    </div>#}
+    {#    <div>#}
+    {#        <td>{{ "Plate Number" }}</td>#}
+    {#        <td>{{ form.plateNumber }}</td>#}
+    {#    </div>#}
+    {#    <div>#}
+    {#        <td>{{ "Vehicle Type" }}</td>#}
+    {#        <td>{{ form.vehicle_type }}</td>#}
+    {#    </div>#}
+    {#    <div>#}
+    {#        <td>{{ "Special Info" }}</td>#}
+    {#        <td>{{ form.special_info }}</td>#}
+    {#    </div>#}
+    {#    <div>#}
+    {#        <input type="submit" value="submit">#}
+    {#    </div>#}
+    <input type="submit" value="submit">
+</form>
+
+{% endblock %}

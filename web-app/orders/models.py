@@ -12,22 +12,22 @@ from django.utils.translation import gettext_lazy as _
 from orders.customized.form_field.widgets import SelectTimeWidget
 # Create your models here.
 
-
-class RiderUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
-class Vehicle(object):
-    plateNumber = None
-
-    def __init__(self):
-        None
-
-
 class RiderDriver(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver', null=True)
+    # user = models.CharField(max_length=120)
     driverName = models.CharField(max_length=120)
-    vehicleInfo = Vehicle()
-
+    plateNumber = models.TextField(blank=True, null=True)
+    # id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    VEHICLE_CHOICE = [("Hatchback", "Hatchback"), ("Sedan", "Sedan"), ("MPV", "MPV"), ("SUV", "SUV"),
+               ("Crossover", "Crossover"), ("Coupe", "Coupe"), ("Convertible", "Convertible")]
+    PASSENGER_N_CHOICE = [(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    vehicle_type = models.CharField(
+        max_length=100,
+        choices=VEHICLE_CHOICE,
+        default="Hatchback"
+    )
+    max_passenger_num = models.IntegerField(choices=PASSENGER_N_CHOICE)
+    special_info = models.TextField(null=True, blank=True)
 
 
 class Question(models.Model):
@@ -48,6 +48,7 @@ class Choice(models.Model):
 
 
 class Ride(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, default=User.objects.create())
     starting_point = models.CharField(max_length=200)
     destination = models.CharField(max_length=200)
     start_time = models.DateTimeField('Start Time')
@@ -113,4 +114,5 @@ class RideForm(ModelForm):
         #     'start_time': SelectDateWidget(),
         #     'finish_time': SelectDateWidget()
         # }
+
 
