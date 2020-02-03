@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if latest_ride_list %}
+    {% if role == 'rider_owner' %}
+        <ul>
+        {% for ride in latest_ride_list %}
+            <li><a href="{% url 'orders:modify_ride' ride.id %}">{{ ride.starting_point }}</a></li>
+        {% endfor %}
+        </ul>
+    {% elif role == 'driver' %}
+        <ul>
+        {% for ride in latest_ride_list %}
+            <li><a href="{% url 'orders:confirm_ride' ride.id %}">{{ ride.starting_point }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Invalid driver type.{{role}}</p>
+    {% endif %}
+{% else %}
+    <p>No rides are available.</p>
+{% endif %}
+
+
+
+{% endblock %}
+
+

@@ -5,6 +5,6 @@
 </head>
 
 {% block content %}
-    <button><a href="{% url 'userPage' %}">I'am a customer</a></button>
-    <button><a href="{% url 'userPage' %}">I'am a driver</a></button>
+    <button><a href="{% url 'orders:menu_rider' %}">I'am a rider</a></button>
+    <button><a href="{% url 'orders:menu_driver' %}">I'am a driver</a></button>
 {% endblock %}

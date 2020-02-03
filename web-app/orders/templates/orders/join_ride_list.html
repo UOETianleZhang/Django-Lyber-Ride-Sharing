@@ -1,0 +1,16 @@
+
+
+{% extends "base.html" %}
+
+{% block content %}
+{% if ride_list %}
+    <ul>
+    {% for ride in ride_list %}
+        <li><a href="{% url 'orders:join_ride' ride.id %}">{{ ride.starting_point }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No rides are available.</p>
+{% endif %}
+
+{% endblock %}
