@@ -9,7 +9,6 @@ from django.forms import ModelForm, Textarea, Select, DateTimeInput, ChoiceField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from orders.customized.form_field.widgets import SelectTimeWidget
 # Create your models here.
 
 class RiderDriver(models.Model):
@@ -28,6 +27,8 @@ class RiderDriver(models.Model):
     )
     max_passenger_num = models.IntegerField(choices=PASSENGER_N_CHOICE)
     special_info = models.TextField(null=True, blank=True)
+
+
 
 
 class Question(models.Model):
@@ -114,5 +115,16 @@ class RideForm(ModelForm):
         #     'start_time': SelectDateWidget(),
         #     'finish_time': SelectDateWidget()
         # }
+
+
+class Order(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    driver = models.OneToOneField(RiderDriver, on_delete=models.CASCADE, null=True)
+    ride = models.OneToOneField(Ride, on_delete=models.CASCADE, null=True)
+
+
+class RiderSharer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
 
 
