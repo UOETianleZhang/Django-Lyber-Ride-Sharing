@@ -9,7 +9,6 @@ from django.forms import ModelForm, Textarea, Select, DateTimeInput, ChoiceField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from orders.customized.form_field.widgets import SelectTimeWidget
 # Create your models here.
 
 class RiderDriver(models.Model):
