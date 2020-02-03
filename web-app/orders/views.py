@@ -2,15 +2,18 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import authenticate, UserCreationForm
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from .models import Choice, Question, Ride
-from .models import RideForm
+from .models import RideForm, RiderDriver
+from .forms import RiderDriverForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 
 def home_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
@@ -24,12 +27,33 @@ def user_page_view(request, *args, **kwargs):
     # request, template name, context info
     return render(request, "userPage.html", {})
 
+
 @login_required()
 def driver_page_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
     # request, template name, context info
     print(request)
     return render(request, "driverPage.html", {})
+
+
+def create_driver_view(request):
+    form = RiderDriverForm()
+    errors = []
+    if request.method == 'POST':
+        form = RiderDriverForm(request.POST)
+        if form.is_valid():
+            # user = get_object_or_404(User, pk=request.user.pk)
+            # user = User.objects.get(username__exact=request.user)
+            driver = RiderDriver(plateNumber=form.cleaned_data['plate_number'],
+                              vehicle_type=form.cleaned_data['vehicle_type'],
+                              max_passenger_num=form.cleaned_data['max_passenger_num'],
+                              special_info=form.cleaned_data['special_info'],
+                                 driverName=form.cleaned_data['driver_name'])
+            driver.save()
+            return HttpResponseRedirect('/')
+        else:
+            errors.append("not valid")
+    return render(request, "driver/new_driver.html", {'form' : form, 'errors' : errors})
 
 
 # Create your views here.
@@ -59,6 +83,7 @@ class IndexView(LoginRequiredMixin, generic.ListView):
         """Return the last five published questions."""
         return Question.objects.order_by('-pub_date')[:5]
 
+
 class RequestRideView(LoginRequiredMixin, generic.CreateView):
     # model = Ride
     form_class = RideForm
@@ -66,6 +91,7 @@ class RequestRideView(LoginRequiredMixin, generic.CreateView):
     # fields = '__all__'
     template_name = 'orders/request_ride.html'
     context_object_name = 'latest_question_list'
+
     # def get_queryset(self):
     #     """Return the last five published questions."""
     #     return Question.objects
@@ -96,6 +122,7 @@ class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
     model = Ride
     fields = '__all__'
     context_object_name = 'ride'
+
     def get_success_url(self):
         return reverse('orders:check_ride')
 
@@ -103,6 +130,7 @@ class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
 class ConfirmRideView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/confirm_ride.html'
+
 
 def confirm(request, ride_id):
     ride = get_object_or_404(Ride, pk=ride_id)
@@ -113,9 +141,11 @@ def confirm(request, ride_id):
     # user hits the Back button.
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
+
 class RideDetailView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/ride_detail.html'
+
 
 class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Question

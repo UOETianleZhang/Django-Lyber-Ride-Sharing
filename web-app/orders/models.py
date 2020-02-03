@@ -11,21 +11,22 @@ from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
-
-class RiderUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-
-class Vehicle(object):
-    plateNumber = None
-
-    def __init__(self):
-        None
-
 class RiderDriver(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver')
+    # user = models.CharField(max_length=120)
     driverName = models.CharField(max_length=120)
-    vehicleInfo = Vehicle()
-
+    plateNumber = models.TextField(blank=True, null=True)
+    # id = models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')
+    VEHICLE_CHOICE = [("Hatchback", "Hatchback"), ("Sedan", "Sedan"), ("MPV", "MPV"), ("SUV", "SUV"),
+               ("Crossover", "Crossover"), ("Coupe", "Coupe"), ("Convertible", "Convertible")]
+    PASSENGER_N_CHOICE = [(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')]
+    vehicle_type = models.CharField(
+        max_length=100,
+        choices=VEHICLE_CHOICE,
+        default="Hatchback"
+    )
+    max_passenger_num = models.IntegerField(choices=PASSENGER_N_CHOICE)
+    special_info = models.TextField(null=True, blank=True)
 
 
 class Question(models.Model):
@@ -46,18 +47,19 @@ class Choice(models.Model):
 
 
 class Ride(models.Model):
+    # user = models.OneToOneField(User, on_delete=models.CASCADE, default=User.objects.create())
     starting_point = models.CharField(max_length=200)
     destination = models.CharField(max_length=200)
     start_time = models.DateTimeField('Start Time')
     finish_time = models.DateTimeField('Finish Time')
-    vehicle_type = models.CharField(
-        max_length=100,
-        choices=[("Hatchback", "Hatchback"), ("Sedan", "Sedan"), ("MPV", "MPV"), ("SUV", "SUV"),
-                 ("Crossover", "Crossover"), ("Coupe", "Coupe"), ("Convertible", "Convertible")],
-        default="Hatchback"
-    )
+    # vehicle_type = models.CharField(
+    #     max_length=100,
+    #     choices=[("Hatchback", "Hatchback"), ("Sedan", "Sedan"), ("MPV", "MPV"), ("SUV", "SUV"),
+    #              ("Crossover", "Crossover"), ("Coupe", "Coupe"), ("Convertible", "Convertible")],
+    #     default="Hatchback"
+    # )
     status = models.CharField(max_length=100, choices=[("open", "open"), ("confirmed", "confirmed"), ("completed", "completed")])
-    max_passenger_num = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
+    # max_passenger_num = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
     cur_passenger_num = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5')])
     special_request = models.IntegerField(choices=[(0, "no special request"), (1, 'special request 1'), (2, 'special request 2'),
                                                    (3, 'special request 3'), (4, 'special request 4'), (5, 'special request 5')])
@@ -90,4 +92,5 @@ class RideForm(ModelForm):
         #     'start_time': DateTimeInput(),
         #     'finish_time': DateTimeInput()
         # }
+
 
