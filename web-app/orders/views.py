@@ -92,16 +92,42 @@ class RequestRideView(LoginRequiredMixin, generic.CreateView):
     template_name = 'orders/request_ride.html'
     context_object_name = 'latest_question_list'
 
-    # def get_queryset(self):
-    #     """Return the last five published questions."""
-    #     return Question.objects
+    def form_valid(self, form):
+        ride_form = form.save(commit=False)
+        ride_form.status = 'open'
+        return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('orders:check_ride')
+        return reverse('orders:check_ride_rider')
 
 
-class CheckRideView(LoginRequiredMixin, generic.ListView):
-    template_name = 'orders/check_ride.html'
+
+class MenuViewRider(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'orders/menu_rider.html'
+
+
+class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'orders/menu_driver.html'
+
+
+class CheckRideViewRider(LoginRequiredMixin, generic.ListView):
+    template_name = 'orders/check_ride_rider.html'
+    context_object_name = 'latest_ride_list'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['role'] = 'rider'
+        return context
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Ride.objects.exclude(status__exact='confirmed')
+
+
+class CheckRideViewDriver(LoginRequiredMixin, generic.ListView):
+    template_name = 'orders/check_ride_driver.html'
     context_object_name = 'latest_ride_list'
 
     def get_context_data(self, **kwargs):
@@ -109,12 +135,11 @@ class CheckRideView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data(**kwargs)
         # Add in a QuerySet of all the books
         context['role'] = 'driver'
-        print(context)
         return context
 
     def get_queryset(self):
         """Return the last five published questions."""
-        return Ride.objects.order_by('start_time')[:5]
+        return Ride.objects.filter(status__exact='open')
 
 
 class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
@@ -127,9 +152,42 @@ class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
         return reverse('orders:check_ride')
 
 
+class JoinRideListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'orders/join_ride_list.html'
+    context_object_name = 'ride_list'
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Ride.objects.filter(status__exact='open')
+
+
+class JoinRideView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'orders/join_ride_detail.html'
+    model = Ride
+    context_object_name = 'ride'
+
+    def post(self, request, *args, **kwargs):
+        ride = get_object_or_404(Ride, pk=kwargs['pk'])
+        ride.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return redirect(reverse('orders:ride_detail', args=[ride.id]))
+
+
 class ConfirmRideView(LoginRequiredMixin, generic.DetailView):
     model = Ride
+    fields = '__all__'
     template_name = 'orders/confirm_ride.html'
+
+    def post(self, request, *args, **kwargs):
+        ride = get_object_or_404(Ride, pk=kwargs['pk'])
+        ride.status = 'confirmed'
+        ride.save()
+        # Always return an HttpResponseRedirect after successfully dealing
+        # with POST data. This prevents data from being posted twice if a
+        # user hits the Back button.
+        return redirect(reverse('orders:ride_detail', args=[ride.id]))
 
 
 def confirm(request, ride_id):

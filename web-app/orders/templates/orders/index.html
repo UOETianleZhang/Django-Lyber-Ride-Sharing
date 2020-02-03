@@ -1,3 +1,11 @@
+
+{#<button><a class="btn btn-primary" href="{% url 'orders:confirm_ride' %}">confirm</a></button>#}
+
+
+
+{% extends "base.html" %}
+
+{% block content %}
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}
@@ -9,5 +17,5 @@
 {% endif %}
 
 <button><a class="btn btn-primary" href="{% url 'orders:request_ride' %}">create</a></button>
-<button><a class="btn btn-primary" href="{% url 'orders:check_ride' %}">check_ride</a></button>
-{#<button><a class="btn btn-primary" href="{% url 'orders:confirm_ride' %}">confirm</a></button>#}
+<button><a class="btn btn-primary" href="{% url 'orders:check_ride_rider' %}">check_ride</a></button>
+{% endblock %}
