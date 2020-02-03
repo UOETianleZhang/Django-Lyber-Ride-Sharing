@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 class RiderDriver(models.Model):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='driver', null=True)
     # user = models.CharField(max_length=120)
     driverName = models.CharField(max_length=120)
     plateNumber = models.TextField(blank=True, null=True)

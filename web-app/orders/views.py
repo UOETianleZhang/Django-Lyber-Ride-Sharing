@@ -42,9 +42,9 @@ def create_driver_view(request):
     if request.method == 'POST':
         form = RiderDriverForm(request.POST)
         if form.is_valid():
-            # user = get_object_or_404(User, pk=request.user.pk)
+            user = get_object_or_404(User, pk=request.user.pk)
             # user = User.objects.get(username__exact=request.user)
-            driver = RiderDriver(plateNumber=form.cleaned_data['plate_number'],
+            driver = RiderDriver(user=user,plateNumber=form.cleaned_data['plate_number'],
                               vehicle_type=form.cleaned_data['vehicle_type'],
                               max_passenger_num=form.cleaned_data['max_passenger_num'],
                               special_info=form.cleaned_data['special_info'],
