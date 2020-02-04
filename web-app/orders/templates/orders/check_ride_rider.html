@@ -3,19 +3,32 @@
 {% block content %}
 {% if latest_ride_list %}
     {% if role == 'rider' %}
-        <ul>
+        <table>
+          <tr>
+              <th>Start from</th>
+              <th>Destination</th>
+              <th>Start time</th>
+              <th>Vehicle type</th>
+              <th>Special request</th>
+              <th>Max passenger num</th>
+              <th>status</th>
+              <th>view</th>
+          </tr>
+
         {% for ride in latest_ride_list %}
-            <li><a href="{% url 'orders:modify_ride' ride.id %}">{{ ride.starting_point }}</a></li>
+              <tr>
+                  <td>{{ ride.starting_point }}</td>
+                  <td>{{ ride.destination }}</td>
+                  <td>{{ ride.start_time }}</td>
+                  <td>{{ ride.vehicle_type }}</td>
+                  <td>{{ ride.special_request }}</td>
+                  <td>{{ ride.max_passenger_num }}</td>
+                  <td>{{ ride.status }}</td>
+                  <td><button><a href="{% url 'orders:modify_ride' ride.id %}">View</a></button></td>
+
+              </tr>
         {% endfor %}
-        </ul>
-    {% elif role == 'driver' %}
-        <ul>
-        {% for ride in latest_ride_list %}
-            <li><a href="{% url 'orders:confirm_ride' ride.id %}">{{ ride.starting_point }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Invalid driver type.{{role}}</p>
+        </table>
     {% endif %}
 {% else %}
     <p>No rides are available.</p>
