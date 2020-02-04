@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if latest_ride_list %}
-    {% if role == 'rider' %}
+{% if my_ride_list %}
         <table>
           <tr>
               <th>Start from</th>
@@ -15,7 +14,7 @@
               <th>view</th>
           </tr>
 
-        {% for ride in latest_ride_list %}
+        {% for ride in my_ride_list %}
               <tr>
                   <td>{{ ride.starting_point }}</td>
                   <td>{{ ride.destination }}</td>
@@ -24,12 +23,11 @@
                   <td>{{ ride.special_request }}</td>
                   <td>{{ ride.max_passenger_num }}</td>
                   <td>{{ ride.status }}</td>
-                  <td><button><a href="{% url 'orders:modify_ride' ride.id %}">View</a></button></td>
+                  <td><button><a href="{% url 'orders:ride_detail' ride.id %}">View</a></button></td>
 
               </tr>
         {% endfor %}
         </table>
-    {% endif %}
 {% else %}
     <p>No rides are available.</p>
 {% endif %}

@@ -5,7 +5,7 @@ from django.db import models
 import datetime
 
 from django.db import models
-from django.forms import ModelForm, Textarea, Select, DateTimeInput, ChoiceField, SelectDateWidget, TimeField
+from django.forms import Form, ModelForm, Textarea, Select, DateTimeInput, ChoiceField, SelectDateWidget, CharField, IntegerField, DateTimeField
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -30,8 +30,6 @@ class RiderDriver(models.Model):
     is_driving = models.BooleanField()
 
 
-
-
 class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published')
@@ -40,6 +38,7 @@ class Question(models.Model):
         return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
     def __str__(self):
         return self.question_text
+
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
@@ -77,17 +76,30 @@ class Ride(models.Model):
         return "start_point: " + self.starting_point + ", destination: " + self.destination + ", start time: " + str(self.start_time) + ", finish time: " + str(self.finish_time) + "\n"
 
 
+class Order(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    driver = models.ForeignKey(RiderDriver, on_delete=models.CASCADE, null=True)
+    ride = models.OneToOneField(Ride, on_delete=models.CASCADE, null=True)
+
+
+class RiderSharer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+
+
+class ShareSearchForm(Form):
+    start_time = DateTimeField(widget=DateTimeInput(attrs={'type': 'datetime-local', 'value': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")}))
+    destination = CharField()
+    num_passengers = IntegerField()
+    special_request = ChoiceField(choices=[(0, "no special request"), (1, 'special request 1'), (2, 'special request 2'),
+                                                   (3, 'special request 3'), (4, 'special request 4'), (5, 'special request 5')])
+
 
 class RideForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['start_time'].initial = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-        self.fields['finish_time'].initial = (datetime.datetime.now() + datetime.timedelta(minutes=30)).strftime("%Y-%m-%d %H:%M")
-
     status = ChoiceField(choices=[("open", "open"), ("confirmed", "confirmed"), ("completed", "completed")],
                          disabled=True, required=False, initial='open')
-    start_time = DateTimeInput(format=['%Y-%m-%d %H:%M'])
-    finish_time = DateTimeInput(format=['%Y-%m-%d %H:%M'])
+    start_time = DateTimeField(input_formats=["%Y-%m-%dT%H:%M"], widget=DateTimeInput(attrs={'type': 'datetime-local', 'value': datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")}))
+    finish_time = DateTimeField(input_formats=["%Y-%m-%dT%H:%M"], widget=DateTimeInput(attrs={'type': 'datetime-local', 'value': (datetime.datetime.now()+datetime.timedelta(minutes=30)).strftime("%Y-%m-%dT%H:%M")}))
 
     class Meta:
         model = Ride
@@ -116,16 +128,5 @@ class RideForm(ModelForm):
         #     'start_time': SelectDateWidget(),
         #     'finish_time': SelectDateWidget()
         # }
-
-
-class Order(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    driver = models.OneToOneField(RiderDriver, on_delete=models.CASCADE, null=True)
-    ride = models.OneToOneField(Ride, on_delete=models.CASCADE, null=True)
-
-
-class RiderSharer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
 
 
