@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<button><a class="btn btn-primary" href="{% url 'orders:check_ride_driver' %}">check order list</a></button>
-
+    <button><a class="btn btn-primary" href="{% url 'orders:check_order_driver' %}">check open orders</a></button>
+    <button><a class="btn btn-primary" href="{% url 'orders:check_my_order_driver' %}">my current orders</a></button>
 {% endblock %}

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>from {{ ride.starting_point}} to {{ ride.destination }}</h1>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <p><strong>from {{ ride.starting_point}} to {{ ride.destination }}</strong></p>
+
+    <table border="1">
+{#        <tr>#}
+{#            <th></th>#}
+{#            <th>Another Heading</th>#}
+        </tr><tr><td>Starting point:</td><td>{{ ride.starting_point }}</td></tr>
+        </tr><tr><td>Destination:</td><td>{{ ride.destination }}</td></tr>
+        </tr><tr><td>Start Time:</td><td>{{ ride.start_time }}</td></tr>
+        </tr><tr><td>Finish Time:</td><td>{{ ride.finish_time }}</td></tr>
+        </tr><tr><td>Vehicle type:</td><td>{{ ride.vehicle_type }}</td></tr>
+        </tr><tr><td>Status:</td><td>{{ ride.status }}</td></tr>
+        </tr><tr><td>Max passenger num:</td><td>{{ ride.max_passenger_num }}</td></tr>
+        </tr><tr><td>Cur passenger num:</td><td>{{ ride.cur_passenger_num }}</td></tr>
+        </tr><tr><td>Special request:</td><td>{{ ride.special_request }}</td></tr>
+    </table>
+
+
+    <form action="." method="post">
+    {% csrf_token %}
+        {% if toFinish %}
+            <input type="submit" value="Finish Order">
+        {% else %}
+            <input type="submit" value="Confirm Order">
+        {% endif %}
+    </form>
+
+{% endblock %}

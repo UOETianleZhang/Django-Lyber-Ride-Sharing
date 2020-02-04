@@ -1,7 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import authenticate, UserCreationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.contrib.auth.models import User
 
 from django.http import HttpResponseRedirect
@@ -28,12 +28,7 @@ def user_page_view(request, *args, **kwargs):
     return render(request, "userPage.html", {})
 
 
-@login_required()
-def driver_page_view(request, *args, **kwargs):
-    # return HttpResponse("<h1>Hello World</h1>")
-    # request, template name, context info
-    print(request)
-    return render(request, "driverPage.html", {})
+
 
 
 def create_driver_view(request):
@@ -106,8 +101,7 @@ class MenuViewRider(LoginRequiredMixin, generic.TemplateView):
     template_name = 'orders/menu_rider.html'
 
 
-class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
-    template_name = 'orders/menu_driver.html'
+
 
 
 class CheckRideViewRider(LoginRequiredMixin, generic.ListView):
@@ -125,6 +119,9 @@ class CheckRideViewRider(LoginRequiredMixin, generic.ListView):
         """Return the last five published questions."""
         return Ride.objects.exclude(status__exact='confirmed')
 
+class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'orders/menu_driver.html'
+
 
 class CheckRideViewDriver(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/check_ride_driver.html'
@@ -141,6 +138,20 @@ class CheckRideViewDriver(LoginRequiredMixin, generic.ListView):
         """Return the last five published questions."""
         return Ride.objects.filter(status__exact='open')
 
+class CheckMyRideViewDriver(LoginRequiredMixin, generic.ListView):
+    template_name = 'orders/check_my_ride_driver.html'
+    context_object_name = 'latest_ride_list'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context['role'] = 'driver'
+        return context
+
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Ride.objects.filter(status__exact='open')
 
 class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'orders/modify_ride.html'
@@ -175,21 +186,6 @@ class JoinRideView(LoginRequiredMixin, generic.DetailView):
         return redirect(reverse('orders:ride_detail', args=[ride.id]))
 
 
-class ConfirmRideView(LoginRequiredMixin, generic.DetailView):
-    model = Ride
-    fields = '__all__'
-    template_name = 'orders/confirm_ride.html'
-
-    def post(self, request, *args, **kwargs):
-        ride = get_object_or_404(Ride, pk=kwargs['pk'])
-        ride.status = 'confirmed'
-        ride.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return redirect(reverse('orders:ride_detail', args=[ride.id]))
-
-
 def confirm(request, ride_id):
     ride = get_object_or_404(Ride, pk=ride_id)
     ride.status = 'confirmed'
@@ -200,9 +196,9 @@ def confirm(request, ride_id):
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
 
-class RideDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Ride
-    template_name = 'orders/ride_detail.html'
+# class RideDetailView(LoginRequiredMixin, generic.DetailView):
+#     model = Ride
+#     template_name = 'orders/ride_detail.html'
 
 
 class DetailView(LoginRequiredMixin, generic.DetailView):

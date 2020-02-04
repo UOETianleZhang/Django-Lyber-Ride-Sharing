@@ -17,7 +17,8 @@ from django.contrib import admin
 from django.urls import path
 # Use include() to add URLS from the catalog application and authentication system
 from django.urls import include
-from orders.views import signup_view, user_page_view, home_view, driver_page_view, create_driver_view
+from orders.views import signup_view, user_page_view, home_view, create_driver_view
+from orders.driver_view import driver_page_view
 
 # urlpatterns = [
 #     path('orders/', include('orders.urls')),

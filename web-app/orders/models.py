@@ -27,6 +27,7 @@ class RiderDriver(models.Model):
     )
     max_passenger_num = models.IntegerField(choices=PASSENGER_N_CHOICE)
     special_info = models.TextField(null=True, blank=True)
+    is_driving = models.BooleanField()
 
 
 
