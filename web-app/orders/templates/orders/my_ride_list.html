@@ -9,6 +9,7 @@
               <th>Start time</th>
               <th>Vehicle type</th>
               <th>Special request</th>
+              <th>current passenger num</th>
               <th>Max passenger num</th>
               <th>status</th>
               <th>view</th>
@@ -21,6 +22,7 @@
                   <td>{{ ride.start_time }}</td>
                   <td>{{ ride.vehicle_type }}</td>
                   <td>{{ ride.special_request }}</td>
+                  <td>{{ ride.total_cur_passenger_num }}</td>
                   <td>{{ ride.max_passenger_num }}</td>
                   <td>{{ ride.status }}</td>
                   <td><button><a href="{% url 'orders:ride_detail' ride.id %}">View</a></button></td>
