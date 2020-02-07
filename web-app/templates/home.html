@@ -4,7 +4,15 @@
     <title>Home Page</title>
 </head>
 
+
 {% block content %}
-    <button><a href="{% url 'orders:menu_rider' %}">I'am a rider</a></button>
-    <button><a href="{% url 'orders:menu_driver' %}">I'am a driver</a></button>
+
+{#        <button class="btn-outline-primary"><a href="{% url 'orders:menu_rider' %}">I'am a rider</a></button>#}
+{#        <button class="btn-primary"><a href="{% url 'orders:menu_driver' %}">I'am a driver</a></button>#}
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-info" name="rider">I'am a rider</button>
+        <button type="submit" class="btn btn-info" name="driver">I'am a driver</button>
+    </form>
+
 {% endblock %}

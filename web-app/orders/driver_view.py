@@ -1,6 +1,7 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import authenticate, UserCreationForm
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 
@@ -8,14 +9,18 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
+
+from Lyber import settings
 from .models import Choice, Question, Ride
 from .models import RideForm, RiderDriver, Order
 from .forms import RiderDriverForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 def getDriverByRequest(request):
     return RiderDriver.objects.get(user=request.user)
+
 
 @login_required()
 def driver_page_view(request, *args, **kwargs):
@@ -24,12 +29,14 @@ def driver_page_view(request, *args, **kwargs):
     print(request)
     return render(request, "driverPage.html", {})
 
+
 def driver_open_order_list_view(request):
-    queryset = Ride.objects.all().filter() # list of objects
+    queryset = Ride.objects.all().filter()  # list of objects
     context = {
         "object_list": queryset
     }
     return render(request, "products/product_list.html", context)
+
 
 def driver_order_detail_view(request, id):
     obj = get_object_or_404(RiderDriver, id=id)
@@ -37,6 +44,7 @@ def driver_order_detail_view(request, id):
         "object": obj
     }
     return render(request, "products/product_detail.html", context)
+
 
 class CheckOrderViewDriver(LoginRequiredMixin, generic.ListView):
     template_name = 'driver/check_order_driver.html'
@@ -51,10 +59,16 @@ class CheckOrderViewDriver(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         order_list = []
+        driver = getDriverByRequest(self.request)
         for order in Order.objects.all():
-            if order.ride.status == 'open':
+            if order.ride.status == 'open' \
+                    and (order.ride.max_passenger_num is None or order.ride.max_passenger_num <= driver.max_passenger_num) \
+                    and (order.ride.vehicle_type is None or order.ride.vehicle_type == driver.vehicle_type) \
+                    and (order.ride.special_request == driver.special_info or order.ride.special_request == 0
+                         or order.ride.special_request is None):
                 order_list.append(order)
         return order_list
+
 
 class CheckMyOrderViewDriver(LoginRequiredMixin, generic.ListView):
     template_name = 'driver/check_order_driver.html'
@@ -72,6 +86,7 @@ class CheckMyOrderViewDriver(LoginRequiredMixin, generic.ListView):
         """Return the last five published questions."""
         return Order.objects.filter(driver=getDriverByRequest(self.request))
 
+
 #################
 class ModifyOrderView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'orders/modify_ride.html'
@@ -83,7 +98,6 @@ class ModifyOrderView(LoginRequiredMixin, generic.UpdateView):
         return reverse('orders:check_ride')
 
 
-
 def confirm(request, ride_id):
     ride = get_object_or_404(Ride, pk=ride_id)
     ride.status = 'confirmed'
@@ -93,58 +107,52 @@ def confirm(request, ride_id):
     # user hits the Back button.
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
-
-class OrderDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Ride
-    template_name = 'driver/confirm_ride_order_version.html'
-    toFinish = True
-
-    def get(self, request, *args, **kwargs):
-        error = []
-        ride = get_object_or_404(Ride, pk=kwargs['pk'])
-        order = Order.objects.get(ride=ride)
-        driver = getDriverByRequest(request)
-        return render(request, self.template_name, {'ride' : ride, 'error' : error, 'toFinish' : self.toFinish})
-
-    def post(self, request, *args, **kwargs):
-        ride = get_object_or_404(Ride, pk=kwargs['pk'])
-        order = Order.objects.get(ride=ride)
-        ride.status = 'finish'
-        ride.save()
-        order.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return redirect(reverse('orders:ride_detail', args=[ride.id]))
-
 class ConfirmRideView(LoginRequiredMixin, generic.DeleteView):
     model = Ride
     fields = '__all__'
     template_name = 'driver/confirm_ride_order_version.html'
-    context_object_name = 'ride'
 
     def get(self, request, *args, **kwargs):
-        error = []
         ride = get_object_or_404(Ride, pk=kwargs['pk'])
         order = Order.objects.get(ride=ride)
         driver = getDriverByRequest(request)
-        toFinish = False
-        return render(request, self.template_name, {'ride' : ride, 'error' : error, 'toFinish' : toFinish})
+        return render(request, self.template_name, {'ride': ride, 'error': "", 'driver': driver})
 
     def post(self, request, *args, **kwargs):
-        error = []
         ride = get_object_or_404(Ride, pk=kwargs['pk'])
         order = Order.objects.get(ride=ride)
         driver = getDriverByRequest(request)
-        toFinish = False
-        if not ride.status == 'open' or driver.is_driving == True:
-            # TODO: error handling, stop
-            return render(request, self.template_name, {'ride' : ride, 'error' : error, 'toFinish' : toFinish})
-        ride.status = 'confirmed'
-        order.driver = driver
-        ride.save()
-        order.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return redirect(reverse('orders:ride_detail', args=[ride.id]))
+
+        if 'confirm' in request.POST:
+            if (not ride.status == 'open') or (driver.is_driving is True):
+                # TODO: error handling, stop
+                return render(request, self.template_name, {'ride': ride, 'error': "Cannot confirm the order! Might "
+                                                                                   "because the driver is driving or "
+                                                                                   "the order is not open anymore.",
+                                                            'driver': driver})
+            email = []
+            email.append(order.owner.email)
+            email.append(driver.user.email)
+            send_mail('The Order is Comfirmed!',
+                      'The driver is on the way. Enjoy your ride!\nPlease rate our service: ☆☆☆☆☆\n', settings.EMAIL_FROM,
+                      ['tianle_zhang@outlook.com'], fail_silently=False)
+            ride.status = 'confirmed'
+            Ride.special_request = driver.special_info
+            Ride.max_passenger_num = driver.max_passenger_num
+            Ride.vehicle_type = driver.vehicle_type
+            driver.is_driving = True
+            order.driver = driver
+            driver.save()
+            ride.save()
+            order.save()
+            return render(request, self.template_name, {'ride': ride, 'error': "", 'driver': driver})
+
+        elif 'finish' in request.POST:
+            ride.status = 'finish'
+            driver.is_driving = False
+            ride.save()
+            order.save()
+            # send email
+            return redirect("orders:menu_driver")
+        else:
+            pass

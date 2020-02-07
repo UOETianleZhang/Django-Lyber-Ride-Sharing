@@ -26,7 +26,8 @@ class RiderDriver(models.Model):
         default="Hatchback"
     )
     max_passenger_num = models.IntegerField(choices=PASSENGER_N_CHOICE)
-    special_info = models.TextField(null=True, blank=True)
+    special_info = models.IntegerField(choices=[(0, "no special request"), (1, 'special request 1'), (2, 'special request 2'),
+                                                   (3, 'special request 3'), (4, 'special request 4'), (5, 'special request 5')], default=0)
     is_driving = models.BooleanField()
 
 

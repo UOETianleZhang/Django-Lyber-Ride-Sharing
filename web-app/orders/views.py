@@ -8,17 +8,27 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
+
+from .driver_view import getDriverByRequest
 from .models import Choice, Question, Ride, Order
 from .models import RideForm, RiderDriver, ShareSearchForm
 from .forms import RiderDriverForm
 import datetime
 
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def home_view(request, *args, **kwargs):
-    # return HttpResponse("<h1>Hello World</h1>")
-    # request, template name, context info
+    if request.method == 'POST':
+        if 'rider' in request.POST:
+            return HttpResponseRedirect('orders/menu_rider/')
+        elif 'driver' in request.POST:
+            if not RiderDriver.objects.filter(user=request.user).exists():
+                return HttpResponseRedirect('driver/newDriver')
+            else:
+                return HttpResponseRedirect('orders/menu_driver/')
+
     return render(request, "home.html", {})
 
 
@@ -27,10 +37,6 @@ def user_page_view(request, *args, **kwargs):
     # return HttpResponse("<h1>Hello World</h1>")
     # request, template name, context info
     return render(request, "userPage.html", {})
-
-
-
-
 
 def create_driver_view(request):
     form = RiderDriverForm()
@@ -44,7 +50,8 @@ def create_driver_view(request):
                               vehicle_type=form.cleaned_data['vehicle_type'],
                               max_passenger_num=form.cleaned_data['max_passenger_num'],
                               special_info=form.cleaned_data['special_info'],
-                                 driverName=form.cleaned_data['driver_name'])
+                                 driverName=form.cleaned_data['driver_name'],
+                                 is_driving=False)
             driver.save()
             return HttpResponseRedirect('/')
         else:
@@ -61,7 +68,8 @@ def signup_view(request, *args, **kwargs):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
+            email = form.cleaned_data.get('email')
+            user = authenticate(username=username, password=raw_password, email=email)
             login(request, user)
             return redirect('/accounts/login')
         errors.append("not valid")
@@ -125,6 +133,12 @@ class CheckRideViewRider(LoginRequiredMixin, generic.ListView):
 class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
     template_name = 'orders/menu_driver.html'
 
+    def post(self, request, *args, **kwargs):
+        if 'open_orders' in request.POST:
+            return HttpResponseRedirect('../check_order_driver/')
+        elif 'current_orders' in request.POST:
+            return HttpResponseRedirect('../check_my_ride_driver/')
+        return render(request, template_name=self.template_name)
 
 class CheckRideViewDriver(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/check_ride_driver.html'
@@ -266,9 +280,9 @@ def confirm(request, ride_id):
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
 
-# class RideDetailView(LoginRequiredMixin, generic.DetailView):
-#     model = Ride
-#     template_name = 'orders/ride_detail.html'
+class RideDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Ride
+    template_name = 'orders/ride_detail.html'
 
 
 class MyRideView(LoginRequiredMixin, generic.ListView):

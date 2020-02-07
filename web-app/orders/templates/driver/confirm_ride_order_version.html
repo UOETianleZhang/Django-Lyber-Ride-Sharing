@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
+
 {% block content %}
     <h1>from {{ ride.starting_point}} to {{ ride.destination }}</h1>
+    {% if  error %}
+        <p>{{ error }}</p>
+    {% endif %}
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <p><strong>from {{ ride.starting_point}} to {{ ride.destination }}</strong></p>
+    <p><strong>Order information</strong></p>
 
-    <table border="1">
-{#        <tr>#}
-{#            <th></th>#}
-{#            <th>Another Heading</th>#}
+    <table class="table" border="1">
         </tr><tr><td>Starting point:</td><td>{{ ride.starting_point }}</td></tr>
         </tr><tr><td>Destination:</td><td>{{ ride.destination }}</td></tr>
         </tr><tr><td>Start Time:</td><td>{{ ride.start_time }}</td></tr>
@@ -22,13 +23,26 @@
     </table>
 
 
+    <p><strong>Driver Information</strong></p>
+    <div>
+    <table border="1">
+        </tr><tr><td>Driver:</td><td>{{ driver.driverName }}</td></tr>
+        </tr><tr><td>Plate Number:</td><td>{{ driver.plateNumber }}</td></tr>
+        </tr><tr><td>Vehicle Type:</td><td>{{ driver.vehicle_type }}</td></tr>
+        </tr><tr><td>Max Passenger Num:</td><td>{{ driver.max_passenger_num }}</td></tr>
+        </tr><tr><td>Special Info:</td><td>{{ driver.special_info }}</td></tr>
+    </table>
+    </div>
+
     <form action="." method="post">
     {% csrf_token %}
-        {% if toFinish %}
-            <input type="submit" value="Finish Order">
-        {% else %}
-            <input type="submit" value="Confirm Order">
-        {% endif %}
+{#        {% if toFinish %}#}
+{#            <input type="submit" value="Finish Order">#}
+{#        {% else %}#}
+{#            <input type="submit" value="Confirm Order">#}
+{#        {% endif %}#}
+        <button type="submit" class="btn btn-info" name="confirm">Confirm Order</button>
+        <button type="submit" class="btn btn-info" name="finish">Finish Order</button>
     </form>
 
 {% endblock %}

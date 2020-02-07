@@ -75,29 +75,29 @@ WSGI_APPLICATION = 'Lyber.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '',
-        # 'HOST': 'db',
-        # 'PORT': 5432,
-    }
-}
-#
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'postgres',
 #         'USER': 'postgres',
-#         'HOST': 'db',
-#         'PORT': 5432,
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#         # 'HOST': 'db',
+#         # 'PORT': 5432,
 #     }
 # }
-#
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'db',
+        'PORT': 5432,
+    }
+}
+
 
 
 # Password validation
@@ -146,3 +146,11 @@ STATICFILES_DIRS = (
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.qq.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = '363628488@qq.com'
+EMAIL_HOST_PASSWORD = 'wcflldixqexmbicg'
+EMAIL_USE_TLS = True
+EMAIL_FROM = 'Lyber<363628488@qq.com>'

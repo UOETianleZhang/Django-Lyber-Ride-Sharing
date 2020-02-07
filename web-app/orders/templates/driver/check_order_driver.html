@@ -1,26 +1,62 @@
+{#{% extends "base.html" %}#}
+{##}
+{#{% block content %}#}
+{#{% if latest_ride_list %}#}
+{#    {% if role == 'rider_owner' %}#}
+{#        <ul>#}
+{#        {% for order in latest_ride_list %}#}
+{#            <li><a href="{% url 'orders:modify_ride' order.ride.id %}">{{ order.ride.starting_point }}</a></li>#}
+{#        {% endfor %}#}
+{#        </ul>#}
+{#    {% elif role == 'driver' %}#}
+{#        <ul>#}
+{#        {% for order in latest_ride_list %}#}
+{#            <li><a href="{% url 'orders:confirm_ride' order.ride.id %}">{{ order.ride.starting_point }}</a></li>#}
+{#        {% endfor %}#}
+{#        </ul>#}
+{#    {% else %}#}
+{#        <p>Invalid driver type.{{role}}</p>#}
+{#    {% endif %}#}
+{#{% else %}#}
+{#    <p>No rides are available.</p>#}
+{#{% endif %}#}
+{#{% endblock %}#}
+
 {% extends "base.html" %}
 
 {% block content %}
-{% if latest_ride_list %}
-    {% if role == 'rider_owner' %}
-        <ul>
-        {% for order in latest_ride_list %}
-            <li><a href="{% url 'orders:modify_ride' order.ride.id %}">{{ order.ride.starting_point }}</a></li>
-        {% endfor %}
-        </ul>
-    {% elif role == 'driver' %}
-        <ul>
-        {% for order in latest_ride_list %}
-            <li><a href="{% url 'orders:confirm_ride' order.ride.id %}">{{ order.ride.starting_point }}</a></li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Invalid driver type.{{role}}</p>
-    {% endif %}
-{% else %}
-    <p>No rides are available.</p>
-{% endif %}
+{#    <t>!!!{{ error }}???</t>#}
 
+    {% if latest_ride_list %}
+            <table>
+              <tr>
+                  <th>Start from</th>
+                  <th>Destination</th>
+                  <th>Start time</th>
+                  <th>Vehicle type</th>
+                  <th>Special request</th>
+                  <th>Max passenger num</th>
+                  <th>status</th>
+                  <th>view</th>
+              </tr>
+
+            {% for order in latest_ride_list %}
+                  <tr>
+                      <td>{{ order.ride.starting_point }}</td>
+                      <td>{{ order.ride.destination }}</td>
+                      <td>{{ order.ride.start_time }}</td>
+                      <td>{{ order.ride.vehicle_type }}</td>
+                      <td>{{ order.ride.special_request }}</td>
+                      <td>{{ order.ride.max_passenger_num }}</td>
+                      <td>{{ order.ride.status }}</td>
+                      <td><button><a href="{% url 'orders:confirm_ride' order.ride.id %}">View</a></button></td>
+
+                  </tr>
+            {% endfor %}
+            </table>
+    {% else %}
+        <p>No rides are available.</p>
+    {% endif %}
 
 
 {% endblock %}
