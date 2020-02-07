@@ -88,7 +88,6 @@ class Order(models.Model):
     can_share = models.BooleanField(choices=[(True, 'Yes'), (False, 'No')], null=True)
     total_cur_passenger_num = models.IntegerField()
 
-
 class RiderSharer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     order = models.ManyToManyField(Order, null=True)

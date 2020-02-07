@@ -12,7 +12,6 @@ urlpatterns = [
     path('<int:pk>/modify_ride/', views.ModifyRideView.as_view(), name='modify_ride'),
 
     path('<int:pk>/confirm_ride/', orders.driver_view.ConfirmRideView.as_view(), name='confirm_ride'),
-    path('<int:pk>/ride_detail_driver/', driver_view.OrderDetailView.as_view(), name='ride_detail'),
     path('my_ride/', views.MyRideView.as_view(), name='my_ride_list'),
     path('<int:pk>/ride_detail_rider/', views.RideDetailView.as_view(), name='ride_detail'),
 

@@ -325,16 +325,13 @@ def confirm(request, ride_id):
 class RideDetailView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/ride_detail.html'
-<<<<<<< HEAD
-
-=======
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         order = Order.objects.filter(ride_id__exact=self.object.id)[0]
         context['sharer'] = order.ridersharer_set.all()
         context['owner_name'] = order.owner.username
         return context
->>>>>>> dev_02_07
+
 
 class MyRideView(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/my_ride_list.html'
