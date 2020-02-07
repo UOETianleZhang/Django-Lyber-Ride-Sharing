@@ -10,8 +10,10 @@
               <th>Start time</th>
               <th>Vehicle type</th>
               <th>Special request</th>
+              <th>current passenger num</th>
               <th>Max passenger num</th>
               <th>status</th>
+              <th>share</th>
               <th>view</th>
           </tr>
 
@@ -22,7 +24,9 @@
                   <td>{{ ride.start_time }}</td>
                   <td>{{ ride.vehicle_type }}</td>
                   <td>{{ ride.special_request }}</td>
+                  <td>{{ ride.total_cur_passenger_num }}</td>
                   <td>{{ ride.max_passenger_num }}</td>
+                  <td>{{ ride.can_share }}</td>
                   <td>{{ ride.status }}</td>
                   <td><button><a href="{% url 'orders:modify_ride' ride.id %}">View</a></button></td>
 

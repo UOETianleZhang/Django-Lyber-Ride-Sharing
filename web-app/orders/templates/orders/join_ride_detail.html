@@ -2,11 +2,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ ride.starting_point }}</h1>
-
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<p><strong>{{ ride.destination }}</strong></p>
+    <ul>
+        <li>owner name: {{owner_name}}</li>
+        <li>start point: {{ride.starting_point }}</li>
+        <li>destination: {{ride.destination }}</li>
+        <li>start time: {{ride.start_time }}</li>
+        <li>hope to finish by: {{ride.finish_time }}</li>
+        <li>vehicle type: {{ride.vehicle_type }}</li>
+        <li>status: {{ride.status }}</li>
+        <li>max passenger num: {{ride.max_passenger_num }}</li>
+        <li>owner passenger num: {{ ride.owner_passenger_num }}</li>
+        <li>total current passenger num: {{ ride.total_cur_passenger_num }}</li>
+        <li>special request: {{ ride.special_request }}</li>
+        <li>can share: {{ ride.can_share }}</li>
+        <ul>
+        {% for share in sharer%}
+            <li>sharer name: {{share.user.username }} sharer passenger num: {{share.sharer_passenger_num }}</li>
+        {% endfor %}
+        </ul>
+    </ul>
 
 <form action="." method="post">
 {% csrf_token %}
