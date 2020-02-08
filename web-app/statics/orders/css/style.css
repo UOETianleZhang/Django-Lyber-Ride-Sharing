@@ -10,3 +10,12 @@
   margin-left: 15px;
   margin-right: 15px;
 }
+.I-am-user-square {
+  border-radius: 0px!important;
+}
+.navbar-top-bottom-margin {
+  margin-bottom: 56px;
+}
+.navbar-top-bottom-margin-compensate {
+  margin-bottom: -56px;
+}
