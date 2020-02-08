@@ -12,7 +12,7 @@ from django.views import generic
 
 from Lyber import settings
 from .models import Choice, Question, Ride
-from .models import RideForm, RiderDriver, Order
+from .models import RideForm, RiderDriver, Order, RiderSharer
 from .forms import RiderDriverForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -62,7 +62,7 @@ class CheckOrderViewDriver(LoginRequiredMixin, generic.ListView):
         driver = getDriverByRequest(self.request)
         for order in Order.objects.all():
             if order.ride.status == 'open' \
-                    and (order.ride.max_passenger_num is None or order.ride.max_passenger_num <= driver.max_passenger_num) \
+                    and (order.ride.owner_passenger_num is None or order.ride.owner_passenger_num <= driver.max_passenger_num) \
                     and (order.ride.vehicle_type is None or order.ride.vehicle_type == driver.vehicle_type) \
                     and (order.ride.special_request == driver.special_info or order.ride.special_request == 0
                          or order.ride.special_request is None):
@@ -107,16 +107,30 @@ def confirm(request, ride_id):
     # user hits the Back button.
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
-class ConfirmRideView(LoginRequiredMixin, generic.DeleteView):
+class ConfirmRideView(LoginRequiredMixin, generic.TemplateView):
     model = Ride
     fields = '__all__'
     template_name = 'driver/confirm_ride_order_version.html'
 
-    def get(self, request, *args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         ride = get_object_or_404(Ride, pk=kwargs['pk'])
         order = Order.objects.get(ride=ride)
-        driver = getDriverByRequest(request)
-        return render(request, self.template_name, {'ride': ride, 'error': "", 'driver': driver})
+        driver = getDriverByRequest(self.request)
+        sharerList = RiderSharer.objects.filter(order__driver_id__exact=order.id)
+        sharers = []
+        for s in sharerList:
+            sharers.append(s)
+        driver.user.first_name
+        context['ride'] = ride
+        context['driver'] = driver
+        context['sharers'] = sharers
+        context['order'] = order
+        context['owner'] = order.owner
+        return context
+
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         ride = get_object_or_404(Ride, pk=kwargs['pk'])
@@ -130,12 +144,11 @@ class ConfirmRideView(LoginRequiredMixin, generic.DeleteView):
                                                                                    "because the driver is driving or "
                                                                                    "the order is not open anymore.",
                                                             'driver': driver})
-            email = []
-            email.append(order.owner.email)
-            email.append(driver.user.email)
+            email = [order.user.email for order in order.ridersharer_set.all()]
+            email = email + [order.owner.email, driver.user.email]
             send_mail('The Order is Comfirmed!',
                       'The driver is on the way. Enjoy your ride!\nPlease rate our service: ☆☆☆☆☆\n', settings.EMAIL_FROM,
-                      ['tianle_zhang@outlook.com'], fail_silently=False)
+                      email, fail_silently=False)
             ride.status = 'confirmed'
             Ride.special_request = driver.special_info
             Ride.max_passenger_num = driver.max_passenger_num
@@ -145,13 +158,14 @@ class ConfirmRideView(LoginRequiredMixin, generic.DeleteView):
             driver.save()
             ride.save()
             order.save()
-            return render(request, self.template_name, {'ride': ride, 'error': "", 'driver': driver})
+            return super().post(request, *args, **kwargs)
 
         elif 'finish' in request.POST:
             ride.status = 'finish'
             driver.is_driving = False
             ride.save()
             order.save()
+            driver.save()
             # send email
             return redirect("orders:menu_driver")
         else:

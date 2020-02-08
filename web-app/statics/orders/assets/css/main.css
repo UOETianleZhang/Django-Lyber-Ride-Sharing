@@ -1155,7 +1155,8 @@ hr {
 #pricing .table .description li {
   font-size: 14px;
   font-weight: 400;
-  color: #abacae;
+  /*color: #abacae;*/
+  /*color: #1b1e21;*/
   padding-bottom: 15px;
 }
 

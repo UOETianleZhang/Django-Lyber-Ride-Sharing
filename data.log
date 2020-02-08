@@ -1,0 +1,47 @@
+BEGIN;
+--
+-- Create model Order
+--
+CREATE TABLE "orders_order" ("id" serial NOT NULL PRIMARY KEY);
+--
+-- Create model Question
+--
+CREATE TABLE "orders_question" ("id" serial NOT NULL PRIMARY KEY, "question_text" varchar(200) NOT NULL, "pub_date" timestamp with time zone NOT NULL);
+--
+-- Create model Ride
+--
+CREATE TABLE "orders_ride" ("id" serial NOT NULL PRIMARY KEY, "starting_point" varchar(200) NOT NULL, "destination" varchar(200) NOT NULL, "start_time" timestamp with time zone NOT NULL, "finish_time" timestamp with time zone NOT NULL, "vehicle_type" varchar(100) NOT NULL, "status" varchar(100) NOT NULL, "max_passenger_num" integer NOT NULL, "cur_passenger_num" integer NOT NULL, "special_request" integer NOT NULL);
+--
+-- Create model RiderSharer
+--
+CREATE TABLE "orders_ridersharer" ("id" serial NOT NULL PRIMARY KEY, "order_id" integer NULL, "user_id" integer NULL UNIQUE);
+--
+-- Create model RiderDriver
+--
+CREATE TABLE "orders_riderdriver" ("id" serial NOT NULL PRIMARY KEY, "driverName" varchar(120) NOT NULL, "plateNumber" text NULL, "vehicle_type" varchar(100) NOT NULL, "max_passenger_num" integer NOT NULL, "special_info" integer NOT NULL, "is_driving" boolean NOT NULL, "user_id" integer NULL UNIQUE);
+--
+-- Add field driver to order
+--
+ALTER TABLE "orders_order" ADD COLUMN "driver_id" integer NULL UNIQUE;
+--
+-- Add field owner to order
+--
+ALTER TABLE "orders_order" ADD COLUMN "owner_id" integer NULL UNIQUE;
+--
+-- Add field ride to order
+--
+ALTER TABLE "orders_order" ADD COLUMN "ride_id" integer NULL UNIQUE;
+--
+-- Create model Choice
+--
+CREATE TABLE "orders_choice" ("id" serial NOT NULL PRIMARY KEY, "choice_text" varchar(200) NOT NULL, "votes" integer NOT NULL, "question_id" integer NOT NULL);
+ALTER TABLE "orders_ridersharer" ADD CONSTRAINT "orders_ridersharer_order_id_fb328ec9_fk_orders_order_id" FOREIGN KEY ("order_id") REFERENCES "orders_order" ("id") DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE "orders_ridersharer" ADD CONSTRAINT "orders_ridersharer_user_id_cab0c792_fk_auth_user_id" FOREIGN KEY ("user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX "orders_ridersharer_order_id_fb328ec9" ON "orders_ridersharer" ("order_id");
+ALTER TABLE "orders_riderdriver" ADD CONSTRAINT "orders_riderdriver_user_id_2f1fee19_fk_auth_user_id" FOREIGN KEY ("user_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE "orders_order" ADD CONSTRAINT "orders_order_driver_id_29f48b88_fk_orders_riderdriver_id" FOREIGN KEY ("driver_id") REFERENCES "orders_riderdriver" ("id") DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE "orders_order" ADD CONSTRAINT "orders_order_owner_id_b000b586_fk_auth_user_id" FOREIGN KEY ("owner_id") REFERENCES "auth_user" ("id") DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE "orders_order" ADD CONSTRAINT "orders_order_ride_id_d047deb6_fk_orders_ride_id" FOREIGN KEY ("ride_id") REFERENCES "orders_ride" ("id") DEFERRABLE INITIALLY DEFERRED;
+ALTER TABLE "orders_choice" ADD CONSTRAINT "orders_choice_question_id_ef1ccf6e_fk_orders_question_id" FOREIGN KEY ("question_id") REFERENCES "orders_question" ("id") DEFERRABLE INITIALLY DEFERRED;
+CREATE INDEX "orders_choice_question_id_ef1ccf6e" ON "orders_choice" ("question_id");
+COMMIT;

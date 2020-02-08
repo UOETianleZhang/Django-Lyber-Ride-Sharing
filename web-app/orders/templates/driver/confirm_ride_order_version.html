@@ -2,7 +2,7 @@
 
 
 {% block content %}
-    <h1>from {{ ride.starting_point}} to {{ ride.destination }}</h1>
+    <h1>from {{ ride.starting_point }} to {{ ride.destination }}</h1>
     {% if  error %}
         <p>{{ error }}</p>
     {% endif %}
@@ -10,39 +10,135 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
     <p><strong>Order information</strong></p>
 
-    <table class="table" border="1">
-        </tr><tr><td>Starting point:</td><td>{{ ride.starting_point }}</td></tr>
-        </tr><tr><td>Destination:</td><td>{{ ride.destination }}</td></tr>
-        </tr><tr><td>Start Time:</td><td>{{ ride.start_time }}</td></tr>
-        </tr><tr><td>Finish Time:</td><td>{{ ride.finish_time }}</td></tr>
-        </tr><tr><td>Vehicle type:</td><td>{{ ride.vehicle_type }}</td></tr>
-        </tr><tr><td>Status:</td><td>{{ ride.status }}</td></tr>
-        </tr><tr><td>Max passenger num:</td><td>{{ ride.max_passenger_num }}</td></tr>
-        </tr><tr><td>Cur passenger num:</td><td>{{ ride.cur_passenger_num }}</td></tr>
-        </tr><tr><td>Special request:</td><td>{{ ride.special_request }}</td></tr>
-    </table>
+
+    {#    <table class="table" border="1">#}
+    {#        </tr><tr><td>Starting point:</td><td>{{ ride.starting_point }}</td></tr>#}
+    {#        </tr><tr><td>Destination:</td><td>{{ ride.destination }}</td></tr>#}
+    {#        </tr><tr><td>Start Time:</td><td>{{ ride.start_time }}</td></tr>#}
+    {#        </tr><tr><td>Finish Time:</td><td>{{ ride.finish_time }}</td></tr>#}
+    {#        </tr><tr><td>Vehicle type:</td><td>{{ ride.vehicle_type }}</td></tr>#}
+    {#        </tr><tr><td>Status:</td><td>{{ ride.status }}</td></tr>#}
+    {#        </tr><tr><td>Max passenger num:</td><td>{{ ride.max_passenger_num }}</td></tr>#}
+    {#        </tr><tr><td>Cur passenger num:</td><td>{{ ride.cur_passenger_num }}</td></tr>#}
+    {#        </tr><tr><td>Special request:</td><td>{{ ride.special_request }}</td></tr>#}
+    {#    </table>#}
 
 
-    <p><strong>Driver Information</strong></p>
-    <div>
-    <table border="1">
-        </tr><tr><td>Driver:</td><td>{{ driver.driverName }}</td></tr>
-        </tr><tr><td>Plate Number:</td><td>{{ driver.plateNumber }}</td></tr>
-        </tr><tr><td>Vehicle Type:</td><td>{{ driver.vehicle_type }}</td></tr>
-        </tr><tr><td>Max Passenger Num:</td><td>{{ driver.max_passenger_num }}</td></tr>
-        </tr><tr><td>Special Info:</td><td>{{ driver.special_info }}</td></tr>
-    </table>
-    </div>
+    <!-- Pricing section Start -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header text-center">
+                <h2 class="section-title wow fadeInDown" data-wow-delay="0.3s">Order Information</h2>
+                <p>Please confirm the information of the order</p>
+            </div>
+            <div class="row">
+                <div class="col-lg-2 col-md-6 col-xs-12" display=None>
+                </div>
 
-    <form action="." method="post">
-    {% csrf_token %}
-{#        {% if toFinish %}#}
-{#            <input type="submit" value="Finish Order">#}
-{#        {% else %}#}
-{#            <input type="submit" value="Confirm Order">#}
-{#        {% endif %}#}
-        <button type="submit" class="btn btn-info" name="confirm">Confirm Order</button>
-        <button type="submit" class="btn btn-info" name="finish">Finish Order</button>
-    </form>
+                <div class="col-lg-8 col-md-6 col-xs-12">
+                    <div class="table wow fadeInUp" data-wow-delay="1.2s">
+                        <div class="title">
+                            <h3>Order</h3>
+                        </div>
+                        <div class="pricing-header">
+                            <p class="price-value"><span></span> {{ ride.starting_point }}
+                                <span>→</span> {{ ride.destination }}</p>
+                        </div>
+                        <ul class="description">
+                            <h1>
+                                <li class="lele_li">Start from: {{ ride.start_time }}</li>
+                                <li class="lele_li">Finish at: {{ ride.finish_time }}</li>
+                                <li class="lele_li">Vehicle: {{ ride.vehicle_type }}</li>
+                                <li class="lele_li">Status: {{ ride.status }}</li>
+                                <li class="lele_li">Cur passenger: {{ ride.cur_passenger_num }} people</li>
+                                <li class="lele_li">Special request: {{ ride.special_request }}</li>
+                            </h1>
+                        </ul>
+                        <form action="." method="post">
+                            <button type="submit" class="btn btn-info btn_padding" name="confirm">Confirm Order</button>
+                            <button type="submit" class="btn btn-info btn_padding" name="finish">Finish Order</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                 <div class="col-lg-4 col-md-6 col-xs-12 active">
+                    <div class="table wow fadeInUp" id="active-tb" data-wow-delay="1.2s">
+                        <div class="title">
+                            <h3>Driver</h3>
+                        </div>
+                        <div class="pricing-header">
+
+                            <p class="price-value">{{ driver.driverName }}</p>
+                        </div>
+                        <ul class="description">
+                            <h1>
+                                <li class="lele_li">Plate Number: {{ driver.plateNumber }}</li>
+                                <li class="lele_li">Vehicle: {{ driver.vehicle_type }}</li>
+                                <li class="lele_li">Max Passenger Num: {{ driver.max_passenger_num }}</li>
+                                <li class="lele_li">Special Info: {{ driver.special_info }} </li>
+                            </h1>
+                        </ul>
+                        <form action="." method="post">
+                            <button class="btn btn-common">Get It</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 col-xs-12 active">
+                    <div class="table wow fadeInUp" data-wow-delay="1.2s">
+                        <div class="title">
+                            <h3>Rider Owner</h3>
+                        </div>
+                        <div class="pricing-header">
+
+                            <p class="price-value">{{ order.owner.username }}</p>
+                        </div>
+                        <ul class="description">
+                            <h1>
+                                <li class="lele_li">Name: {{ order.owner.username }}</li>
+                                <li class="lele_li">First Name: {{ order.owner.first_name }}</li>
+                                <li class="lele_li">Last Name: {{ order.owner.last_name }}</li>
+                                <li class="lele_li">Email: {{ order.owner.email }}</li>
+                            </h1>
+                        </ul>
+                        <form action="." method="post">
+                            <button class="btn btn-common">Get It</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% for sharer in sharers %}
+                <div class="col-lg-4 col-md-6 col-xs-12 active">
+                    <div class="table wow fadeInUp" id="active-tb" data-wow-delay="1.2s">
+                        <div class="title">
+                            <h3>Rider Sharer</h3>
+                        </div>
+                        <div class="pricing-header">
+
+                            <p class="price-value">{{sharer.username }}</p>
+                        </div>
+                        <ul class="description">
+                            <h1>
+                                <li class="lele_li">Name: {{ sharer.username }}</li>
+                                <li class="lele_li">First Name: {{ sharer.first_name }}</li>
+                                <li class="lele_li">Last Name: {{ sharer.last_name }}</li>
+                                <li class="lele_li">Email: {{ sharer.email }}</li>
+                            </h1>
+                        </ul>
+                        <form action="." method="post">
+                            <button class="btn btn-common">Get It</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
 
 {% endblock %}

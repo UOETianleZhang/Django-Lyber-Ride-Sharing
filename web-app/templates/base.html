@@ -5,13 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'orders/style.css' %}">
-{#    <link rel="stylesheet" type="text/css" href="{% static 'orders/style.css' %}">#}
+        <link rel="stylesheet" type="text/css" href="{% static 'orders/assets/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'orders/assets/fonts/line-icons.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'orders/css/style.css' %}">
+        <!-- Icon -->
+        <!-- Slicknav -->
+        <link rel="stylesheet" href="{% static 'orders/assets/css/slicknav.css' %}">
+        <!-- Owl carousel -->
+        <link rel="stylesheet" href="{% static 'orders/assets/css/owl.carousel.min.css' %}">
+        <link rel="stylesheet" href="{% static 'orders/assets/css/owl.theme.css' %}">
+
+        <link rel="stylesheet" href="{% static 'orders/assets/css/magnific-popup.css' %}">
+        <link rel="stylesheet" href="{% static 'orders/assets/css/nivo-lightbox.css' %}">
+        <!-- Animate -->
+        <link rel="stylesheet" href="{% static 'orders/assets/css/animate.css' %}">
+        <!-- Main Style -->
+        <link rel="stylesheet" href="{% static 'orders/assets/css/main.css' %}">
+        <!-- Responsive Style -->
+        <link rel="stylesheet" href="{% static 'orders/assets/css/responsive.css' %}">
+
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{% static 'orders/assets/js/jquery-min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/popper.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/owl.carousel.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.mixitup.js' %}"></script>
+        <script src="{% static 'orders/assets/js/wow.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.nav.js' %}"></script>
+        <script src="{% static 'orders/assets/js/scrolling-nav.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.easing.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.counterup.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/nivo-lightbox.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.magnific-popup.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/waypoints.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/jquery.slicknav.js' %}"></script>
+        <script src="{% static 'orders/assets/js/main.js' %}"></script>
+        <script src="{% static 'orders/assets/js/form-validator.min.js' %}"></script>
+        <script src="{% static 'orders/assets/js/contact-form-script.min.js' %}"></script>
     <title>Lyber</title>
+
+     <!-- Navbar Start -->
+      <nav class="navbar navbar-expand-md bg-inverse fixed-top scrolling-navbar">
+        <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+{#          <a href="index.html" class="navbar-brand"><img src="assets/img/logo.png" alt=""></a>#}
+            {% load static %}
+            <a href="index.html" class="navbar-brand"><h1>Lyber</h1></a>
+{#          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">#}
+{#            <i class="lni-menu"></i>#}
+{#          </button>#}
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto w-100 justify-content-end clearfix">
+              <li class="nav-item active">
+                <a class="nav-link" href="#hero-area">
+                  Home
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#feature">
+                  Feature
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <!-- Navbar End -->
+
+
 </head>
 <body>
 {% block content %} {% endblock %}
-</body >
+
 <ul class="sidebar-nav">
 
     {% if user.is_authenticated %}
@@ -21,5 +86,7 @@
     <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
     {% endif %}
 </ul>
+</body >
+
 </html>
 

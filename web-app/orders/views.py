@@ -70,8 +70,10 @@ def signup_view(request, *args, **kwargs):
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
-            email = form.cleaned_data.get('email')
+            email = request.POST.get("email")
             user = authenticate(username=username, password=raw_password, email=email)
+            user.email = email
+            user.save()
             login(request, user)
             return redirect('/accounts/login')
         errors.append("not valid")
