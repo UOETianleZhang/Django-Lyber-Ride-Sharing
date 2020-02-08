@@ -19,7 +19,7 @@ import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
+@login_required()
 def home_view(request, *args, **kwargs):
     if request.method == 'POST':
         if 'rider' in request.POST:

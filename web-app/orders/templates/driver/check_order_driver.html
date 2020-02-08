@@ -28,35 +28,55 @@
 {#    <t>!!!{{ error }}???</t>#}
 
     {% if latest_ride_list %}
-            <table>
-              <tr>
-                  <th>Start from</th>
-                  <th>Destination</th>
-                  <th>Start time</th>
-                  <th>Vehicle type</th>
-                  <th>Special request</th>
-                  <th>Max passenger num</th>
-                  <th>status</th>
-                  <th>view</th>
-              </tr>
 
-            {% for order in latest_ride_list %}
-                  <tr>
-                      <td>{{ order.ride.starting_point }}</td>
-                      <td>{{ order.ride.destination }}</td>
-                      <td>{{ order.ride.start_time }}</td>
-                      <td>{{ order.ride.vehicle_type }}</td>
-                      <td>{{ order.ride.special_request }}</td>
-                      <td>{{ order.ride.max_passenger_num }}</td>
-                      <td>{{ order.ride.status }}</td>
-                      <td><button><a href="{% url 'orders:confirm_ride' order.ride.id %}">View</a></button></td>
-
-                  </tr>
-            {% endfor %}
-            </table>
+        <div class="row" style="margin-right: 100px">
+        <!-- column -->
+        <div class="col-12">
+            <div class="card" style="margin-left: 50px; border: none" >
+                <div class="card-body">
+                    <!-- title -->
+                    <div class="d-md-flex align-items-center">
+                        <div>
+                            <h4 class="card-title">My Orders</h4>
+                        </div>
+                    </div>
+                    <!-- title -->
+                </div>
+                <div class="table-responsive" style="margin-left: 50px; margin-right: 50px">
+                    <table class="table v-middle">
+                        <thead>
+                            <tr class="bg-light">
+                                <th class="border-top-0">Start from</th>
+                                <th class="border-top-0">Destination</th>
+                                <th class="border-top-0">Start time</th>
+                                <th class="border-top-0">Vehicle type</th>
+                                <th class="border-top-0">Special request</th>
+                                <th class="border-top-0">status</th>
+                                <th class="border-top-0">view</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in latest_ride_list %}
+                                  <tr>
+                                      <td>{{ order.ride.starting_point }}</td>
+                                      <td>{{ order.ride.destination }}</td>
+                                      <td>{{ order.ride.start_time }}</td>
+                                      <td>{{ order.ride.vehicle_type }}</td>
+                                      <td>{{ order.ride.special_request }}</td>
+                                      <td>{{ order.ride.max_passenger_num }}</td>
+                                      <td>{{ order.ride.status }}</td>
+                                    <td><a class="btn btn-common" href="{% url 'orders:confirm_ride' order.ride.id %}">View</a></td
+                                  </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     {% else %}
         <p>No rides are available.</p>
     {% endif %}
+
 
 
 {% endblock %}

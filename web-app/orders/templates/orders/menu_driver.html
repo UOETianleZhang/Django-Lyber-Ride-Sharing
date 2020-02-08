@@ -3,10 +3,11 @@
 {% block content %}
 {#    <button><a class="btn btn-info" href="{% url 'orders:check_order_driver' %}">check open orders</a></button>#}
 {#    <button><a class="btn btn-info" href="{% url 'orders:check_my_order_driver' %}">my current orders</a></button>#}
-
-    <form method="post">
+<div style="margin-top: 300px; margin-bottom: 300px">
+    <form method="post" align="center">
         {% csrf_token %}
-        <button type="submit" class="btn btn-info" name="open_orders">check open orders</button>
+        <button type="submit" class="btn btn-info" name="open_orders" style="margin-right: 100px">check open orders</button>
         <button type="submit" class="btn btn-info" name="current_orders">my current orders</button>
     </form>
+</div>
 {% endblock %}
