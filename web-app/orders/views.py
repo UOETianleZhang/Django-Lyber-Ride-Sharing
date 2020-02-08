@@ -9,11 +9,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
-
-from .driver_view import getDriverByRequest
+from django.http import Http404
 from .models import Choice, Question, Ride, Order, RiderSharer
-from .models import RideForm, RiderDriver, ShareSearchForm, OrderForm
-from .forms import RiderDriverForm
+from .models import  RiderDriver
+from .forms import RideForm, RiderDriverForm, ShareSearchForm, OrderForm
 import datetime
 
 
@@ -81,20 +80,12 @@ def signup_view(request, *args, **kwargs):
     return render(request, 'registration/signup.html', {'user': form, 'errors': errors})
 
 
-class IndexView(LoginRequiredMixin, generic.ListView):
+class IndexView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'orders/index.html'
-    context_object_name = 'latest_question_list'
-
-    def get_queryset(self):
-        """Return the last five published questions."""
-        return Question.objects.order_by('-pub_date')[:5]
 
 
 class RequestRideView(LoginRequiredMixin, generic.CreateView):
-    # model = Ride
     form_class = RideForm
-    # print(form_class)
-    # fields = '__all__'
     template_name = 'orders/request_ride.html'
     context_object_name = 'latest_question_list'
 
@@ -119,16 +110,13 @@ class CheckRideViewRider(LoginRequiredMixin, generic.ListView):
     context_object_name = 'latest_ride_list'
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
         context['role'] = 'rider'
         return context
 
     def get_queryset(self):
-        """Return the last five published questions."""
         return Ride.objects.filter(order__owner_id__exact=self.request.user.id)\
-            .exclude(status__exact='confirmed')
+            .exclude(status__in=['completed', 'confirmed'])
 
 
 class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
@@ -141,36 +129,31 @@ class MenuViewDriver(LoginRequiredMixin, generic.TemplateView):
             return HttpResponseRedirect('../check_my_ride_driver/')
         return render(request, template_name=self.template_name)
 
+
 class CheckRideViewDriver(LoginRequiredMixin, generic.ListView):
     template_name = 'orders/check_ride_driver.html'
     context_object_name = 'latest_ride_list'
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
         context['role'] = 'driver'
         return context
 
     def get_queryset(self):
-        """Return the last five published questions."""
         return Ride.objects.filter(status__exact='open')
 
 
-class CheckMyRideViewDriver(LoginRequiredMixin, generic.ListView):
-    template_name = 'orders/check_my_ride_driver.html'
-    context_object_name = 'latest_ride_list'
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add in a QuerySet of all the books
-        context['role'] = 'driver'
-        return context
-
-    def get_queryset(self):
-        """Return the last five published questions."""
-        return Ride.objects.filter(status__exact='open')
+# class CheckMyRideViewDriver(LoginRequiredMixin, generic.ListView):
+#     template_name = 'orders/check_my_ride_driver.html'
+#     context_object_name = 'latest_ride_list'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['role'] = 'driver'
+#         return context
+#
+#     def get_queryset(self):
+#         return Ride.objects.filter(status__exact='open')
 
 
 class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
@@ -199,39 +182,17 @@ class ModifyRideView(LoginRequiredMixin, generic.UpdateView):
     def get_queryset(self):
         return Ride.objects\
             .filter(order__owner_id__exact=self.request.user.id, order__ridersharer__isnull=True)\
-            .exclude(status__exact='confirmed')
+            .exclude(status__exact='completed')
 
     def get_success_url(self):
         return reverse('orders:check_ride_rider')
 
-    def get_object(self, queryset=None):
-        if queryset is None:
-            queryset = self.get_queryset()
-
-        # Next, try looking up by primary key.
-        pk = self.kwargs.get(self.pk_url_kwarg)
-        if pk is not None:
-            queryset = queryset.filter(pk=pk)
-
-        # If pk not defined, it's an error.
-        if pk is None:
-            raise AttributeError(
-                "Generic detail view %s must be called with either an object "
-                "pk or a slug in the URLconf." % self.__class__.__name__
-            )
-        try:
-            # Get the single item from the filtered queryset
-            obj = queryset.get()
-        except queryset.model.DoesNotExist:
-            return None
-        return obj
-
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object == None:
+        try:
+            self.object = self.get_object()
+        except Http404:
             return redirect("orders:modify_fail")
-        else:
-            return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class ModifyFailView(LoginRequiredMixin, generic.TemplateView):
@@ -284,7 +245,10 @@ class JoinRideView(LoginRequiredMixin, generic.DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        ride = get_object_or_404(Ride, pk=kwargs['pk'])
+        try:
+            ride = get_object_or_404(Ride, pk=kwargs['pk'])
+        except Http404:
+            return redirect(reverse("orders:join_fail"))
         order = Order.objects.filter(ride__exact=ride)[0]
         sharer_passenger_num = int(messages.get_messages(self.request)._loaded_messages[-1].message)
         ridesharer = RiderSharer(user=request.user, sharer_passenger_num=sharer_passenger_num)
@@ -295,9 +259,6 @@ class JoinRideView(LoginRequiredMixin, generic.DetailView):
         ride.total_cur_passenger_num += sharer_passenger_num
         order.save()
         ride.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
         messages.get_messages(self.request).used = True
         return redirect(reverse('orders:ride_detail', args=[ride.id]))
 
@@ -305,16 +266,20 @@ class JoinRideView(LoginRequiredMixin, generic.DetailView):
         return Ride.objects.exclude(order__ridersharer__user__in=[self.request.user])
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        if self.object == None:
-            return redirect("orders:modify_fail")
-        else:
-            return super().get(request, *args, **kwargs)
+        try:
+            self.object = self.get_object()
+        except Http404:
+            return redirect("orders:join_fail")
+        return super().get(request, *args, **kwargs)
+
+
+class JoinRideFailView(LoginRequiredMixin, generic.TemplateView):
+    template_name = 'orders/join_ride_failed.html'
 
 
 def confirm(request, ride_id):
     ride = get_object_or_404(Ride, pk=ride_id)
-    ride.status = 'confirmed'
+    ride.status = 'completed'
     ride.save()
     # Always return an HttpResponseRedirect after successfully dealing
     # with POST data. This prevents data from being posted twice if a
@@ -325,12 +290,25 @@ def confirm(request, ride_id):
 class RideDetailView(LoginRequiredMixin, generic.DetailView):
     model = Ride
     template_name = 'orders/ride_detail.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         order = Order.objects.filter(ride_id__exact=self.object.id)[0]
         context['sharer'] = order.ridersharer_set.all()
         context['owner_name'] = order.owner.username
+        context['driver'] = order.driver
+        context['ride'] = order.ride
         return context
+
+    def get_queryset(self):
+        return Ride.objects.exclude(status__exact="completed")
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.object = self.get_object()
+        except Http404:
+            return redirect("orders:join_fail")
+        return super().get(request, *args, **kwargs)
 
 
 class MyRideView(LoginRequiredMixin, generic.ListView):
@@ -338,33 +316,5 @@ class MyRideView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'my_ride_list'
 
     def get_queryset(self):
-        return Ride.objects.filter(Q(order__owner_id__exact=self.request.user.id)| Q(order__ridersharer__user_id=self.request.user.id)).exclude(status__exact="confirmed")
+        return Ride.objects.filter(Q(order__owner_id__exact=self.request.user.id)| Q(order__ridersharer__user_id=self.request.user.id)).exclude(status__exact="completed")
 
-
-class DetailView(LoginRequiredMixin, generic.DetailView):
-    model = Question
-    template_name = 'orders/detail.html'
-
-
-class ResultsView(generic.DetailView):
-    model = Question
-    template_name = 'orders/results.html'
-
-
-def vote(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
-    except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'orders/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
-    else:
-        selected_choice.votes += 1
-        selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('orders:results', args=(question.id)))
