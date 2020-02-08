@@ -15,29 +15,29 @@
 {% endif %}
 {% endif %}
 
-
+<div style="margin-left: 150px">
 <form action="" method="post" id="user_form" novalidate="">
     {% csrf_token %}
-    <p>First, enter a username and password. Then, you'll be able to edit more user options.</p>
+    <p class="lele_li">First, enter a username and password. Then, you'll be able to edit more user options.</p>
     <div>
         <fieldset class="module aligned wide">
             <div class="form-row field-username">
                 <div>
-                    <label class="required" for="id_username">Username:</label>
-                    <input type="text" name="username" class="vTextField" maxlength="150" autofocus="" required=""
+                    <label class="required lele_li" for="id_username">Username:</label>
+                    <input type="text" name="username" class="vTextField lele_li" maxlength="150" autofocus="" required=""
                            id="id_username">
                     <div class="help">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</div>
                 </div>
             </div>
             <div class="form-row field-email">
                 <div>
-                    <label for="id_email">Email address:</label>
-                    <input type="email" name="email" class="vTextField" maxlength="254" id="id_email">
+                    <label for="id_email" class="lele_li">Email address:</label>
+                    <input type="email" name="email" class="vTextField lele_li" maxlength="254" id="id_email">
                 </div>
             </div>
             <div class="form-row field-password1">
                 <div>
-                    <label class="required" for="id_password1">Password:</label>
+                    <label class="required lele_li" for="id_password1">Password:</label>
 
                     <input type="password" name="password1" required="" id="id_password1">
                     <div class="help">
@@ -52,17 +52,16 @@
             </div>
             <div class="form-row field-password2">
                 <div>
-                    <label class="required" for="id_password2">Password confirmation:</label>
+                    <label class="required lele_li" for="id_password2">Password confirmation:</label>
                     <input type="password" name="password2" required="" id="id_password2">
                     <div class="help">Enter the same password as before, for verification.</div>
                 </div>
             </div>
         </fieldset>
-        <div class="submit-row"><input type="submit" value="Save" class="default" name="_save">
-            <input type="submit" value="Save and add another" name="_addanother">
-            <input type="submit" value="Save and continue editing" name="_continue">
+        <div class="submit-row" style="margin-left: 150px">
+            <input type="submit"  value="Save" class="default btn btn-common" name="_save">
         </div>
     </div>
 </form>
-
+</div>
 {% endblock %}
