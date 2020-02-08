@@ -24,7 +24,7 @@
 </head>
 {% block content %}
 
-
+<div class="navbar-top-bottom-margin-compensate"></div>
     <!-- Header Area wrapper Starts -->
     <header id="header-wrap">
 
@@ -54,22 +54,13 @@
 
     {% load static %}
     <!-- Feature Section Start -->
+<form method="post">
     <div id="feature">
       <div class="container-fluid">
         <h2 class="row">
 
-{#          <div class="col-lg-6 col-md-12 col-sm-12">#}
-{#            <div class="text-wrapper">#}
-{#              <div>#}
-{#                <h2 class="title-hl wow fadeInLeft" data-wow-delay="0.3s">We are helping to grow <br> your business.</h2>#}
-{#                <p class="mb-4">A digital studio specialising in User Experience & eCommerce, we combine innovation with digital craftsmanship to help brands fulfill their potential.</p>#}
-{#                <a href="#" class="btn btn-common">More About Us</a>#}
-{#              </div>#}
-{#            </div>#}
-{#          </div>#}
-        <form method="post">
         {% csrf_token %}
-            <button class="col-lg-6 col-md-12 col-sm-12  padding-none filter active btn btn-effect" type="submit" name="rider">
+            <button class="col-lg-6 col-md-12 col-sm-12  padding-none filter active btn btn-effect I-am-user-square" type="submit" name="rider">
               <div class="feature-item wow fadeInDown" data-wow-duration="1000ms" data-wow-delay="300ms">
                 <div>
                   <h3>I am a user</h3>
@@ -86,10 +77,10 @@
 
                           </div>
           </button>
-        </form>
         </h2>
-      </div>
     </div>
+    </div>
+</form>
     <!-- Feature Section End -->
 
     <!-- Services Section Start -->
