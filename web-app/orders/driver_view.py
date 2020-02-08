@@ -98,7 +98,7 @@ def confirm(request, ride_id):
     ride.save()
     return HttpResponseRedirect(reverse('orders:ride_detail', args=(ride.id)))
 
-class ConfirmRideView(LoginRequiredMixin, generic.TemplateView):
+class ConfirmRideView(LoginRequiredMixin, generic.UpdateView):
     model = Ride
     fields = '__all__'
     template_name = 'driver/confirm_ride_order_version.html'
