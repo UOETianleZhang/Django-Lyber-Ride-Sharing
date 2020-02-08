@@ -2,14 +2,11 @@
 
 
 {% block content %}
-    <h1>from {{ ride.starting_point }} to {{ ride.destination }}</h1>
     {% if  error %}
-        <p>{{ error }}</p>
+        <h3 style="color: #721c24">{{ error }}</h3>
     {% endif %}
 
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <p><strong>Order information</strong></p>
-
+    {% if error_message %}<h3 style="color: #721c24">{{ error_message }}</h3> </p>{% endif %}
 
     {#    <table class="table" border="1">#}
     {#        </tr><tr><td>Starting point:</td><td>{{ ride.starting_point }}</td></tr>#}
@@ -55,6 +52,7 @@
                             </h1>
                         </ul>
                         <form action="." method="post">
+                            {% csrf_token %}
                             <button type="submit" class="btn btn-info btn_padding" name="confirm">Confirm Order</button>
                             <button type="submit" class="btn btn-info btn_padding" name="finish">Finish Order</button>
                         </form>
@@ -84,6 +82,7 @@
                             </h1>
                         </ul>
                         <form action="." method="post">
+                            {% csrf_token %}
                             <button class="btn btn-common">Get It</button>
                         </form>
                     </div>
@@ -130,7 +129,7 @@
                                 <li class="lele_li">Email: {{ sharer.email }}</li>
                             </h1>
                         </ul>
-                        <form action="." method="post">
+                        <form action="." method="post"> {% csrf_token %}
                             <button class="btn btn-common">Get It</button>
                         </form>
                     </div>

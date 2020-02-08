@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.views import generic
 
 from Lyber import settings
-from .models import Choice, Question, Ride
+from .models import Choice, Question, Ride, RiderSharer
 from .forms import RiderDriverForm, RideForm, RiderDriver, Order
 
 from django.contrib.auth.mixins import LoginRequiredMixin

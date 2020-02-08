@@ -242,8 +242,10 @@ class JoinRideView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         order = Order.objects.filter(ride_id__exact=self.object.id)[0]
-        context['sharer'] = order.ridersharer_set.all()
-        context['owner_name'] = order.owner.username
+        context['sharers'] = order.ridersharer_set.all()
+        context['owner'] = order.owner
+        context['order'] = order
+        context['driver'] = order.driver
         return context
 
     def post(self, request, *args, **kwargs):
@@ -296,10 +298,10 @@ class RideDetailView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         order = Order.objects.filter(ride_id__exact=self.object.id)[0]
-        context['sharer'] = order.ridersharer_set.all()
-        context['owner_name'] = order.owner.username
+        context['sharers'] = [order.user for order in order.ridersharer_set.all()]
+        context['owner'] = order.owner
         context['driver'] = order.driver
-        context['ride'] = order.ride
+        context['order'] = order
         return context
 
     def get_queryset(self):

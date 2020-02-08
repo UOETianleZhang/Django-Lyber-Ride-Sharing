@@ -50,7 +50,7 @@
           <!-- Brand and toggle get grouped for better mobile display -->
 {#          <a href="index.html" class="navbar-brand"><img src="assets/img/logo.png" alt=""></a>#}
             {% load static %}
-            <a href="index.html" class="navbar-brand"><h1>Lyber</h1></a>
+            <a href="/" class="navbar-brand"><h1>Lyber</h1></a>
 {#          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">#}
 {#            <i class="lni-menu"></i>#}
 {#          </button>#}
@@ -78,12 +78,36 @@
     <div class="navbar-top-bottom-margin"></div>
 {% block content %} {% endblock %}
 
-                {% if user.is_authenticated %}
-                    <li  class="nav-item"><p class="nav-link">User: {{ user.get_username }}</p></li>
-                    <li class="nav-item active"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
-                {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a></li>
-                {% endif %}
+{#                {% if user.is_authenticated %}#}
+{#                    <li  class="nav-item"><p class="nav-link">User: {{ user.get_username }}</p></li>#}
+{#                    <li class="nav-item active"><a class="nav-link" href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>#}
+{#                {% else %}#}
+{#                    <li class="nav-item"><a class="nav-link" href="{% url 'login'%}?next={{request.path}}">Login</a></li>#}
+{#                {% endif %}#}
+    <!-- Copyright Section Start -->
+    <div class="copyright">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 col-md-3 col-xs-12">
+            <div class="footer-logo">
+              <h2 style="color: white">Lyber</h2>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-4 col-xs-12">
+            <div class="social-icon text-center">
+              <a class="facebook" href="#"><i class="lni-facebook-filled"></i></a>
+              <a class="twitter" href="#"><i class="lni-twitter-filled"></i></a>
+              <a class="instagram" href="#"><i class="lni-instagram-filled"></i></a>
+              <a class="linkedin" href="#"><i class="lni-linkedin-filled"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-5 col-xs-12">
+              <p class="float-right"><li>We are</li><li>your</li><li>FRIEND</li></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Copyright Section End -->
 
 </body >
 
